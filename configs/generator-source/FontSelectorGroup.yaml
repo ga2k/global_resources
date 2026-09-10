@@ -1,0 +1,65 @@
+groups:
+  # @formatter:off
+  popup_alerts:
+    layout:                  "FormLayout:FontSelectorGroup-Layout"
+    title:                   "Font Selector"
+    recordset:              {  }
+
+    elements:
+      - section:             "Font Selector"
+        tool_tip:            "Choose your desired font"
+        items:
+          - control:
+              class:          CheckBox
+              field:          bUsePopupAlerts
+              handlers:   [ { event: wxEVT_COMMAND_CHECKBOX_CLICKED, handler: onUsePopup(dynamic_cast<wxCommandEvent&>(event)); } ]
+              name:          "UsePopupAlerts"
+              table:          settings
+              validator:    { allow_empty: false, class: GenericValidator }
+              variable:       m_usePopup
+          - labels:
+              - name:        "UsePopupAlertsLabel"
+
+      - section:             "Test Popup"
+        tool_tip:            "Send a test popup notification using the credentials below"
+        items:
+          - control:
+              class:          TestButton
+              field:          fPopupTestStatus
+              handlers:   [ { event: wxEVT_COMMAND_BUTTON_CLICKED, handler: event.Skip(); onTestPopup(dynamic_cast<wxCommandEvent&>(event)); } ]
+              name:          "Popup Test Button"
+              table:          settings
+              validator:    { allow_empty: false, class: GenericValidator }
+              value:          TestButton::loadTestStatus("settings", "fPopupTestStatus")
+              variable:       m_popupTestButton
+
+      - section:             "Advance Notice"
+        tool_tip:            "How much advance notice should be given using this alert method"
+        items:
+          - control:
+              args:         { arg_name: noticeArgs, insert: [ min, int, "1", max, int, "720" ] }
+              class:          SpinCtrl
+              field:          fPopupNotice
+              name:          "Advance Notice"
+              size:           fwCtrlButton
+              table:          settings
+              validator:    { allow_empty: false, class: GenericValidator }
+              value:          60
+              variable:       m_notice
+          - labels:
+              - name:        "AdvanceNoticeLabel"
+
+    on_event:
+    on_set_active:
+    functions:
+      getTestStatus:        { args: "",                       return: TestStatus }
+      enableControls:       { args: "bool isChecked",         return: void }
+      onTestPopup:          { args: "wxCommandEvent &event",  return: void }
+      onUsePopup:           { args: "wxCommandEvent &event",  return: void }
+
+#    finally:
+#      body: |
+#        auto pts = rec->get<std::optional<int>>("fPopupTestStatus").value_or(0);
+#        TestStatus popupTestStatus = magic_enum::enum_cast<TestStatus>(pts).value();
+#        m_popupTestStatus->set(popupTestStatus);
+  # @Formatter:on
